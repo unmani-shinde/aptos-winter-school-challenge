@@ -1,0 +1,16 @@
+[package]
+name = "click-moi"
+version = "1.0.0"
+authors = []
+
+[addresses]
+click_moi_addr = '1873bb1fd18062329392afd089d33e7188b72fbc776b20f3ee701f2b5e5d0679'
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]
