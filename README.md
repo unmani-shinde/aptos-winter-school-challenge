@@ -36,7 +36,7 @@ This platform seamlessly integrates Aptos blockchain technology, allowing users 
 - ReactJS - Frontend
 - [Move](https://aptos.dev/move/move-on-aptos) - Smart Contract
 - [Aptos CLI](https://aptos.dev/tools/aptos-cli/) - Deployment of Contract.
-- [Petra Wallet](https://chromewebstore.google.com/detail/petra-aptos-wallet/ejjladinnckdgjemekebdpeokbikhfci?pli=1) - User Interaction 
+- [Petra Wallet](https://petra.app/docs) - User Interaction 
 
   ## 🗒️Smart Contracts
 
@@ -51,9 +51,20 @@ Aptos Explorer (Testnet) link: [Link](https://explorer.aptoslabs.com/account/0xb
 
 ## 👩🏻‍💻 Developer Setup
 
-STEP 1: [Install Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm): Node.js is an open-source, cross-platform JavaScript runtime environment that executes JavaScript code outside of a web browser. It allows developers to build server-side applications in JavaScript and run them on the server. It includes a rich library of modules, known as npm (Node Package Manager), that enables developers to add functionality to their applications quickly and easily. It is widely used for web application development, building networked applications, and developing server-side scripts.
-STEP 2: [Install APTOS CLI](https://aptos.dev/tools/aptos-cli/install-cli/) The `aptos` tool is a command line interface (CLI) for developing on the Aptos blockchain, debugging, and for node operations. 
+- STEP 1: [Install Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm): Node.js is an open-source, cross-platform JavaScript runtime environment that executes JavaScript code outside of a web browser. It allows developers to build server-side applications in JavaScript and run them on the server. It includes a rich library of modules, known as npm (Node Package Manager), that enables developers to add functionality to their applications quickly and easily. It is widely used for web application development, building networked applications, and developing server-side scripts.
+- STEP 2: [Install APTOS CLI](https://aptos.dev/tools/aptos-cli/install-cli/) The `aptos` tool is a command line interface (CLI) for developing on the Aptos blockchain, debugging, and for node operations. 
+- STEP 3: [Install the Petra Wallet Extension](https://chromewebstore.google.com/detail/petra-aptos-wallet/ejjladinnckdgjemekebdpeokbikhfci?pli=1) Petra is an interface to the Aptos blockchain. Petra is a free web application available as a Google Chrome extension that lets users store and transfer assets, create and view NFTs, and interact with decentralized applications (dApps), all on the Aptos blockchain.
 
+ ## 💻Usage
+
+In the root directory, install all the dependencies of the frontend by running the command:
+### `npm install`
+
+Then run:
+Execute the backend by running the command:
+### `npm start`
+
+NOTE: For additional details about contract deployment, see: [Create a Smart Contract with APTOS CLI](https://aptos.dev/tutorials/build-e2e-dapp/create-a-smart-contract)
 
 
 # License:clipboard:
