@@ -5,17 +5,24 @@ import { WalletSelector } from '@aptos-labs/wallet-adapter-ant-design';
 import "@aptos-labs/wallet-adapter-ant-design/dist/index.css";
 import {AptosClient,Network,Provider} from "aptos";
 import {Alert, Button, Col, Descriptions, Input, Layout, Row, Spin, Typography} from "antd";
+import { useNavigate } from 'react-router-dom';
 
 export const NETWORK = "testnet";
 export const NODE_URL = `https://fullnode.testnet.aptoslabs.com`;
-export const moduleAddress = `0x1873bb1fd18062329392afd089d33e7188b72fbc776b20f3ee701f2b5e5d0679`;
+export const moduleAddress = '0xb8533e4a7ab7bdc888af3ad576b396a6ca97f1d542e131101246669297041ff4';
+export const hostAddress = '0xb8533e4a7ab7bdc888af3ad576b396a6ca97f1d542e131101246669297041ff4';
 export const client = new AptosClient(NODE_URL);
 export const provider = new Provider(Network.TESTNET);
 
-const ClickGameApp = () => {
+const ClickGameHome = () => {
   
   const [data, setData] = useState(-1);
+  const [universalCount,setUniversalCount] = useState(-2);
   const [transactionInProgress,setTransactionInProgress] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
+
+  const nav = useNavigate();
   
   const {
     network,
@@ -26,7 +33,25 @@ const ClickGameApp = () => {
   } = useWallet();
 
   useEffect(() => {
-    fetch();
+    const fetchData = async () => {
+      try {
+        if(!updating){setLoading(true); await fetch();} // Initial fetch
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    // Set up an interval to fetch the data every 10 seconds
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 10000);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
   }, [account?.address]);
 
   const fetch = async () => {
@@ -36,9 +61,18 @@ const ClickGameApp = () => {
         account.address,
         `${moduleAddress}::ClickApt::GlobalCount`,
       );
-      var data = JSON.parse(countResource?.data.count);
+
+      const globalResource = await provider.getAccountResource(
+        hostAddress,
+        `${moduleAddress}::ClickApt::GlobalCount`,
+      );
+
+      var data = JSON.parse(countResource.data.count);
       setData(data);
-      console.log(data);
+
+      data = JSON.parse(globalResource.data.foo);
+      setUniversalCount(data);
+      
       // if(reload){
       //   window.location.reload();
       // }
@@ -57,18 +91,27 @@ const ClickGameApp = () => {
   const incrementButton = async () => {
 
     setTransactionInProgress(true);
+    setUpdating(true);
 
     const response = await signAndSubmitTransaction({
       sender: account.address,
       data: {
         function: `${moduleAddress}::ClickApt::increment`,
         typeArguments: [],
-        functionArguments: [],
+        functionArguments: [hostAddress],
       },
     });
 
     try {
       await client.waitForTransaction({ transactionHash: response.hash });
+      setLoading(true);
+      try {
+        await fetch(); // Initial fetch
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setUpdating(false);
+      }
 
     } catch (error) {
       console.error(error);
@@ -134,12 +177,7 @@ const ClickGameApp = () => {
 //   };
 
 
-  const handleViewConnectionStatus = () => {
-    // console.log("Discovering the connection status...");
-    setTimeout(() => {
-      console.log(typeof(connected));
-    }, 10000);
-  };
+  
 
   return (
     <div>
@@ -162,12 +200,36 @@ const ClickGameApp = () => {
         />
       )}
       {connected && (network?.name.toString()).toLowerCase() === NETWORK && (
+         <Button onClick={()=>{nav(`/leaderboard`)}}style={{marginTop:'9vh'}}disabled={!account || transactionInProgress}>View LeaderBoard</Button>
+      )}
+      {connected && !(loading) && (network?.name.toString()).toLowerCase() === NETWORK && (
         <Spin spinning={transactionInProgress}>
-         <h3>Global Count:{data}</h3>
-         <h3>Account:{account?.address}</h3>
+          <h3>Hello! The Network Name is: {network?.name}</h3>
+          <h3>Universal Count: {universalCount}</h3>          
+          <h3>User's Count:{data}</h3>
+          <h3>Account:{account?.address}</h3>
          <Button disabled={!account || transactionInProgress} onClick={incrementButton}>Increment Counter</Button>
         </Spin>
       )}
+
+      
+
+      {connected && (loading) && (network?.name.toString()).toLowerCase() === NETWORK && (
+        <div style={{display:'flex',flexDirection:'column'}}>
+          <p>Reacquiring data...</p>
+          <div className="loader"></div>
+        </div>
+        
+      )}
+
+      {connected && (updating) && (!transactionInProgress) (network?.name.toString()).toLowerCase() === NETWORK && (
+        <div style={{display:'flex',flexDirection:'column'}}>
+        <p>Updating data...</p>
+        <div className="loader"></div>
+      </div>
+      )}
+
+
   
       {/* Uncomment the following code if needed */}
       {/* <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', width: '100%', alignSelf: 'center', alignItems: 'center' }}>
@@ -219,4 +281,4 @@ const ClickGameApp = () => {
   // );
 };
 
-export default ClickGameApp;
+export default ClickGameHome;
